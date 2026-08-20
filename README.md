@@ -1,130 +1,94 @@
 # WordPress Business Starter
 
-Production-oriented WordPress starter for small and medium business websites.
+Готовая основа для небольших корпоративных сайтов на WordPress: реальная админка `/wp-admin`, редактирование страниц через Gutenberg, кастомная тема и небольшой core-плагин для бизнес-настроек и заявок.
 
-This repository contains:
+## Что внутри
 
-- a custom WordPress theme;
-- a companion core plugin;
-- a business settings admin screen;
-- a lightweight leads inbox in WordPress;
-- a contact-form shortcode;
-- Gutenberg patterns for common business sections;
-- Docker-based local development;
-- installation and seed scripts;
-- deployment, plugin, integration and client-handoff documentation.
+- `wp-content/themes/business-starter` — кастомная тема компании.
+- `wp-content/plugins/business-starter-core` — настройки компании, shortcode контактов, форма заявки и раздел **Leads** в админке.
+- `docker-compose.yml` — локальный WordPress + MariaDB + WP-CLI.
+- `scripts/install-wordpress.sh` — установка WordPress и активация стартера.
+- `scripts/seed-content.sh` — создание базовых страниц.
+- `docs/CLIENT_HANDOFF_CHECKLIST.md` — обязательный чек-лист перед передачей клиенту.
+- `docs/REQUIRED_INTEGRATIONS.md` — что обязательно подключить и что ставится только по ситуации.
+- `docs/HOSTING_DEPLOYMENT.md` — как развернуть на обычном PHP/MySQL-хостинге.
+- `docs/PLUGIN_STACK.md` — рекомендуемые категории плагинов без лишнего дублирования.
 
-## What this starter is for
-
-Use this repository as a repeatable base for brochure sites, local-service businesses, construction companies, agencies, consultants and other lead-generation websites.
-
-The starter deliberately keeps WordPress core, uploads and secrets out of Git. Track only the custom theme, custom plugin and project documentation.
-
-## Architecture
+## Архитектура
 
 ```text
-Browser
+Domain
+  ↓ DNS
+Hosting (PHP + MySQL)
   ↓
-WordPress / PHP
-  ├── Business Starter theme
-  ├── Business Starter Core plugin
-  └── MySQL / MariaDB
-        ↓
-/wp-admin
+WordPress core
+  ├── /wp-admin          ← админка клиента
+  ├── database           ← страницы, настройки, пользователи, лиды
+  └── wp-content/
+      ├── themes/business-starter
+      ├── plugins/business-starter-core
+      └── uploads/       ← не хранить в Git
 ```
 
-The real WordPress administration panel remains available at `/wp-admin`. The companion plugin adds a **Business** settings page and a **Leads** section.
+WordPress core, база данных, `wp-config.php`, uploads и секреты не должны храниться в этом репозитории. Git хранит только ваш кастомный код и документацию.
 
-## Repository structure
+## Быстрый локальный запуск
 
-```text
-wordpress-business-starter/
-├── .env.example
-├── .gitignore
-├── docker-compose.yml
-├── docs/
-│   ├── CLIENT_HANDOFF_CHECKLIST.md
-│   ├── HOSTING_DEPLOYMENT.md
-│   ├── PLUGIN_STACK.md
-│   └── REQUIRED_INTEGRATIONS.md
-├── scripts/
-│   ├── install-wordpress.sh
-│   └── seed-content.sh
-└── wp-content/
-    ├── plugins/
-    │   └── business-starter-core/
-    └── themes/
-        └── business-starter/
-```
-
-## Local development
-
-### Requirements
-
-- Docker + Docker Compose
-- optional: WP-CLI if you are not using the included container workflow
-
-### 1. Configure environment
+1. Скопировать окружение:
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` and use development-only credentials.
+2. Обязательно поменять пароли и email в `.env`.
 
-### 2. Start WordPress
+3. Запустить:
 
 ```bash
-docker compose up -d
+docker compose up -d db wordpress
 ```
 
-Open `http://localhost:8080`.
-
-### 3. Install WordPress
-
-You can finish the browser installer manually or run:
+4. Установить WordPress и активировать стартер:
 
 ```bash
 bash scripts/install-wordpress.sh
 ```
 
-The script reads configuration from `.env`.
-
-### 4. Seed starter pages
+5. Создать базовые страницы:
 
 ```bash
 bash scripts/seed-content.sh
 ```
 
-This creates a basic page structure and assigns a front page.
-
-## WordPress admin
-
-After installation:
+6. Открыть:
 
 ```text
-http://localhost:8080/wp-admin
+Сайт:    http://localhost:8080
+Админка: http://localhost:8080/wp-admin
 ```
 
-The admin panel is WordPress itself. This starter does not replace WordPress with a custom admin application.
+## Что редактирует клиент в админке
 
-### Business settings
+### Pages
+Клиент меняет тексты, изображения и Gutenberg-блоки обычных страниц.
 
-Activate **Business Starter Core** and open:
+### Appearance
+Меню, логотип и настройки темы зависят от версии WordPress и активных возможностей темы.
 
-```text
-WordPress Admin → Business
-```
+### Business
+Кастомная страница настроек:
 
-Configure:
-
-- company phone;
-- company email;
+- название компании;
+- телефон;
+- email;
 - WhatsApp URL;
-- physical address;
-- lead-notification email.
+- адрес;
+- email для входящих заявок.
 
-Available shortcodes:
+### Leads
+Заявки с встроенной формы сохраняются в админке и дополнительно отправляются на email через `wp_mail()`. Для production обязательно подключите нормальную SMTP/API-доставку почты.
+
+## Shortcodes
 
 ```text
 [business_phone]
@@ -134,119 +98,33 @@ Available shortcodes:
 [business_contact_form]
 ```
 
-The contact form saves submissions as private **Lead** records in WordPress and sends an email notification using `wp_mail()`.
+Их можно вставлять в Gutenberg через блок **Shortcode**.
 
-For production, configure an SMTP/API mail provider. Do not rely on default PHP mail delivery.
+## Что делать для нового клиента
 
-## Theme
+1. Сделать новый приватный репозиторий из этого starter.
+2. Заменить название темы/брендинг при необходимости.
+3. Развернуть WordPress на staging.
+4. Создать страницы и меню.
+5. Загрузить оптимизированные изображения.
+6. Настроить Business Settings.
+7. Подключить форму, SMTP, SEO, backup, аналитику и Search Console.
+8. Проверить mobile/desktop, формы, ссылки, 404, HTTPS и sitemap.
+9. Выполнить `docs/CLIENT_HANDOFF_CHECKLIST.md`.
+10. Передать клиенту его собственные доступы.
 
-Activate:
+## Production
 
-```text
-Appearance → Themes → Business Starter
-```
+Docker-файл здесь нужен в первую очередь для локальной разработки. На обычном WordPress-хостинге WordPress и MySQL ставятся средствами хостинга, после чего вы загружаете кастомную тему и плагин из `wp-content/`.
 
-The theme includes:
+Не коммитьте:
 
-- responsive header and navigation;
-- page, single and archive templates;
-- 404 page;
-- accessible skip link;
-- Gutenberg block patterns;
-- global design tokens in `theme.json`;
-- lightweight CSS and JavaScript;
-- WordPress-managed title tag, logo and menus.
+- `.env`;
+- `wp-config.php`;
+- пароли;
+- API keys;
+- database dump с реальными данными клиентов;
+- `wp-content/uploads` с приватными файлами;
+- коммерческие плагины, если лицензия не разрешает распространение.
 
-## Gutenberg patterns
-
-Starter patterns include:
-
-- Hero;
-- Services;
-- Process;
-- CTA.
-
-They can be inserted from the WordPress block editor and then customized for each client.
-
-## Recommended production workflow
-
-```text
-Local / staging
-  ↓
-Git repository
-  ↓
-Production hosting
-  ↓
-Domain + DNS
-  ↓
-HTTPS
-  ↓
-SMTP / forms
-  ↓
-SEO + Search Console + analytics
-  ↓
-Backup + security checks
-  ↓
-Client handoff
-```
-
-Do not store production database passwords, SMTP passwords, API tokens, private keys or WordPress salts in the repository.
-
-## Mandatory production items
-
-Before handoff, at minimum verify:
-
-1. domain and DNS ownership;
-2. HTTPS with automatic certificate renewal;
-3. working WordPress administrator account owned by the client;
-4. tested contact forms;
-5. reliable SMTP/API email delivery;
-6. backups with a tested restore path;
-7. SEO titles, indexing settings and XML sitemap;
-8. Google Search Console or the client's chosen search-console equivalent;
-9. analytics if required by the client;
-10. privacy/cookie requirements appropriate to the business and jurisdiction;
-11. software updates, strong passwords and least-privilege user roles;
-12. mobile, desktop, form, link and 404 testing;
-13. complete ownership/access transfer.
-
-See [Client handoff checklist](docs/CLIENT_HANDOFF_CHECKLIST.md) for the detailed checklist.
-
-## Plugin policy
-
-Do not install plugins merely because they are popular. Every plugin adds maintenance and security surface area.
-
-Typical categories:
-
-- SEO: Rank Math **or** Yoast, not both;
-- forms: use the built-in starter form for simple leads or one dedicated forms plugin;
-- mail: SMTP/API delivery plugin or provider integration;
-- backup: use the host's reliable backups or one backup solution;
-- caching: choose a solution that matches the hosting stack;
-- security: add dedicated security tooling when the hosting/security model requires it;
-- redirects: useful during migrations and URL changes;
-- spam protection: enable when public forms receive abuse.
-
-See [Plugin stack](docs/PLUGIN_STACK.md).
-
-## Production deployment
-
-This repository is not a full copy of WordPress core. On production hosting:
-
-1. install a fresh supported WordPress version;
-2. connect the production database;
-3. deploy this repository's custom `wp-content/themes/business-starter` and `wp-content/plugins/business-starter-core`;
-4. activate the theme and plugin;
-5. migrate/import the client's content when needed;
-6. configure all production-only secrets in the host/server, not in Git;
-7. run the full handoff checklist.
-
-See [Hosting deployment](docs/HOSTING_DEPLOYMENT.md).
-
-## Updates
-
-Keep WordPress core, plugins and themes updated, but test updates on staging or ensure a verified rollback/backup exists before production changes.
-
-## License
-
-Starter project code: MIT. WordPress itself and third-party plugins/themes retain their own licenses.
+Подробности: `docs/HOSTING_DEPLOYMENT.md`.
