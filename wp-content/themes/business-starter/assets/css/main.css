@@ -1,0 +1,64 @@
+:root {
+  --ink: #111827;
+  --muted: #667085;
+  --surface: #f5f7fa;
+  --brand: #1d4ed8;
+  --border: #e5e7eb;
+  --radius: 18px;
+  --shadow: 0 18px 50px rgba(17, 24, 39, .08);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; color: var(--ink); background: #fff; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+a { color: inherit; }
+img { max-width: 100%; height: auto; }
+.container { width: min(1180px, calc(100% - 40px)); margin-inline: auto; }
+.screen-reader-text { position: absolute; left: -9999px; }
+.screen-reader-text:focus { left: 20px; top: 20px; z-index: 999; padding: 12px; background: #fff; }
+
+.site-header { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.94); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+.header-inner { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.site-title { font-size: 1.1rem; font-weight: 800; text-decoration: none; }
+.custom-logo { max-height: 48px; width: auto; }
+.primary-nav ul { display: flex; gap: 24px; align-items: center; list-style: none; padding: 0; margin: 0; }
+.primary-nav a { text-decoration: none; font-weight: 600; }
+.menu-toggle { display: none; }
+
+.site-main { min-height: 55vh; }
+.content-shell { padding-block: 72px; }
+.entry-header, .archive-header { margin-bottom: 32px; }
+.entry-content > * { margin-top: 0; margin-bottom: 1.25rem; }
+.content-card { padding-block: 24px; border-bottom: 1px solid var(--border); }
+.eyebrow { text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 700; font-size: .8rem; }
+.button, .wp-block-button__link { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 20px; border-radius: 999px; background: var(--brand); color: #fff; text-decoration: none; border: 0; font-weight: 700; }
+
+.wp-block-group.is-style-section, .business-section { padding-block: clamp(64px, 8vw, 112px); }
+.wp-block-group.is-style-surface { background: var(--surface); padding-block: clamp(64px, 8vw, 112px); }
+.wp-block-columns.business-cards { gap: 20px; }
+.wp-block-columns.business-cards > .wp-block-column { border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; background: #fff; box-shadow: var(--shadow); }
+.hero-wrap { padding-block: clamp(84px, 10vw, 150px); background: linear-gradient(180deg, #fff 0%, var(--surface) 100%); }
+.hero-wrap h1 { max-width: 980px; font-size: clamp(2.6rem, 7vw, 6.5rem); letter-spacing: -.055em; margin-bottom: 24px; }
+.hero-wrap p { max-width: 720px; font-size: clamp(1.1rem, 2vw, 1.4rem); color: var(--muted); }
+
+.site-footer { background: #111827; color: #fff; padding: 56px 0 24px; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; }
+.site-footer ul { list-style: none; padding: 0; margin: 0; }
+.site-footer a { color: #fff; }
+.footer-contact { display: grid; gap: 8px; }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,.15); margin-top: 36px; padding-top: 20px; color: #cbd5e1; }
+
+.bs-contact-form { display: grid; gap: 16px; max-width: 720px; }
+.bs-contact-form label { display: grid; gap: 7px; font-weight: 700; }
+.bs-contact-form input, .bs-contact-form textarea { width: 100%; padding: 14px 15px; border: 1px solid #cfd4dc; border-radius: 10px; font: inherit; }
+.bs-contact-form textarea { min-height: 150px; resize: vertical; }
+.bs-contact-form .hp-field { position: absolute !important; left: -9999px !important; }
+.bs-form-message { padding: 14px 16px; border-radius: 10px; background: var(--surface); margin-bottom: 16px; }
+
+@media (max-width: 800px) {
+  .menu-toggle { display: inline-flex; }
+  .primary-nav { display: none; position: absolute; top: 76px; left: 0; right: 0; background: #fff; border-bottom: 1px solid var(--border); padding: 20px; }
+  .primary-nav.is-open { display: block; }
+  .primary-nav ul { flex-direction: column; align-items: flex-start; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
